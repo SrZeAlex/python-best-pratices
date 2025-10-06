@@ -278,7 +278,7 @@ if __name__ == "__main__":
     # Test successful creation
     try:
         user = userAccount("john_doe", "secret123", "john@example.com", 25)
-        print(f"✓ Successfully created user: {user.username}")
+        print(f"✓ Successfully created user: {user.Username}")
 
         # Test authentication
         if user.login("secret123"):
