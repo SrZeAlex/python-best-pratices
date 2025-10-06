@@ -1,0 +1,203 @@
+"""
+User Account Management System
+
+This module provides functionality for managing user accounts including
+authentication, profile management, and data validation.
+
+Example:
+    user = UserAccount('john_doe', 'secret123', 'john@example.com', 25)
+    if user.login('secret123'):
+        print('Login successful')
+"""
+
+from datetime import datetime
+import requests
+
+
+class userAccount:
+    """
+    A user account management class.
+
+    This class handles user authentication, profile information,
+    and account lifecycle management.
+
+    Attributes:
+        username (str): The user's unique username
+        email (str): The user's email address
+        age (int): The user's age
+        created_at (datetime): Account creation timestamp
+        last_login (datetime): Last successful login timestamp
+        is_active (bool): Account active status
+
+    Example:
+        >>> user = UserAccount('john', 'pass123', 'john@email.com', 25)
+        >>> user.login('pass123')
+        True
+    """
+
+    def __init__(self, username, password, email, age):
+        """
+        Initialize a new user account.
+
+        Args:
+            username (str): The user's unique username
+            password (str): The user's password
+            email (str): The user's email address
+            age (int): The user's age
+
+        Example:
+            >>> user = userAccount('john', 'pass123', 'john@email.com', 25)
+        """
+        self.Username = username
+        self.Password = password
+        self.Email = email
+        self.Age = age
+        self.created_at = datetime.now()
+        self.last_login = None
+        self.is_active = True
+
+    def login(self, password):
+        """
+        Authenticate user with provided password.
+
+        Args:
+            password (str): The password to verify
+
+        Returns:
+            bool: True if authentication successful, False otherwise
+
+        Example:
+            >>> user.login('correct_password')
+            True
+            >>> user.login('wrong_password')
+            False
+        """
+
+        if password == self.Password:
+            self.last_login = datetime.now()
+            return True
+        else:
+            return False
+
+    def get_account_info(self):
+        """
+        Retrieve account information.
+
+        Returns:
+            dict: Dictionary containing username, email, age, and active
+            status.
+
+        Example:
+            >>> user.get_account_info()
+            {'username': 'john', 'email': 'john@email.com', 'age': 25,
+            'active': True}
+        """
+
+        return {
+            "username": self.Username,
+            "email": self.Email,
+            "age": self.Age,
+            "active": self.is_active,
+        }
+
+    def update_password(self, old_password, new_password):
+        """
+        Update the user's password if the old password is correct.
+
+        Args:
+            old_password (str): The current password
+            new_password (str): The new password to set
+
+        Returns:
+            bool: True if password updated successfully, False otherwise
+
+        Example:
+            >>> user.update_password('oldpass', 'newpass')
+            True
+        """
+
+        if self.login(old_password):
+            self.Password = new_password
+            return True
+        return False
+
+
+def validate_email(email):
+    """
+    Validate email address format.
+
+    Performs basic email validation by checking for '@' and '.' characters.
+    Note: This is a simplified validation for demonstration purposes.
+
+    Args:
+        email (str): Email address to validate
+
+    Returns:
+        bool: True if email appears valid, False otherwise
+
+    Raises:
+        TypeError: If email is not a string
+
+    Example:
+        >>> validate_email('user@example.com')
+        True
+        >>> validate_email('invalid-email')
+        False
+    """
+
+    if "@" in email and "." in email:
+        return True
+    else:
+        return False
+
+
+def calculate_account_age(created_date):
+    """
+    Calculate the age of an account in days.
+
+    Args:
+        created_date (datetime): The account creation date
+
+    Returns:
+        int: Number of days since account creation
+
+    Example:
+        >>> calculate_account_age(datetime(2023, 1, 1))
+        365
+    """
+
+    now = datetime.now()
+    diff = now - created_date
+    return diff.days
+
+
+def fetch_user_data(user_id):
+    """
+    Fetch user data from an external API.
+
+    Args:
+        user_id (str or int): The unique identifier of the user
+
+    Returns:
+        dict or None: User data as a dictionary if found, None otherwise
+
+    Example:
+        >>> fetch_user_data(123)
+        {'username': 'john_doe', ...}
+    """
+
+    url = f"https://api.example.com/users/{user_id}"
+    response = requests.get(url)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return None
+
+
+if __name__ == "__main__":
+    user = userAccount("john_doe", "secret123", "john@example.com", 25)
+    print("User created:", user.get_account_info())
+    if user.login("secret123"):
+        print("Login successful")
+    else:
+        print("Login failed")
