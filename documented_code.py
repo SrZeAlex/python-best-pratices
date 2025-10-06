@@ -12,6 +12,7 @@ Example:
 
 from datetime import datetime
 import requests
+from typing import Optional, Dict, Any
 
 
 class userAccount:
@@ -35,7 +36,21 @@ class userAccount:
         True
     """
 
-    def __init__(self, username, password, email, age):
+    Username: str
+    Password: str
+    Email: str
+    Age: int
+    created_at: datetime
+    last_login: Optional[datetime]
+    is_active: bool
+
+    def __init__(
+        self,
+        username: str,
+        password: str,
+        email: str,
+        age: int
+    ) -> None:
         """
         Initialize a new user account.
 
@@ -56,7 +71,7 @@ class userAccount:
         self.last_login = None
         self.is_active = True
 
-    def login(self, password):
+    def login(self, password: str) -> bool:
         """
         Authenticate user with provided password.
 
@@ -79,7 +94,7 @@ class userAccount:
         else:
             return False
 
-    def get_account_info(self):
+    def get_account_info(self) -> Dict[str, Any]:
         """
         Retrieve account information.
 
@@ -100,7 +115,7 @@ class userAccount:
             "active": self.is_active,
         }
 
-    def update_password(self, old_password, new_password):
+    def update_password(self, old_password: str, new_password: str) -> bool:
         """
         Update the user's password if the old password is correct.
 
@@ -122,7 +137,7 @@ class userAccount:
         return False
 
 
-def validate_email(email):
+def validate_email(email: str) -> bool:
     """
     Validate email address format.
 
@@ -151,7 +166,7 @@ def validate_email(email):
         return False
 
 
-def calculate_account_age(created_date):
+def calculate_account_age(created_date: datetime) -> int:
     """
     Calculate the age of an account in days.
 
@@ -171,7 +186,7 @@ def calculate_account_age(created_date):
     return diff.days
 
 
-def fetch_user_data(user_id):
+def fetch_user_data(user_id: int) -> Optional[Dict[str, Any]]:
     """
     Fetch user data from an external API.
 
