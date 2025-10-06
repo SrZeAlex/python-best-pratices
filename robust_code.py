@@ -18,21 +18,25 @@ from typing import Optional, Dict, Any
 # Custom exceptions
 class UserAccountError(Exception):
     """Base exception for user account operations."""
+
     pass
 
 
 class InvalidEmailError(UserAccountError):
     """Raised when email format is invalid."""
+
     pass
 
 
 class AuthenticationError(UserAccountError):
     """Raised when authentication fails."""
+
     pass
 
 
 class NetworkError(UserAccountError):
     """Raised when network operations fail."""
+
     pass
 
 
@@ -65,13 +69,8 @@ class userAccount:
     last_login: Optional[datetime]
     is_active: bool
 
-    def __init__(
-        self,
-        username: str,
-        password: str,
-        email: str,
-        age: int
-    ) -> None:
+    def __init__(self, username: str, password: str, email: str,
+                 age: int) -> None:
         """
         Initialize a new user account.
 
@@ -191,13 +190,13 @@ def validate_email(email: str) -> bool:
     email = email.strip().lower()
     if not email:
         raise InvalidEmailError("Email cannot be empty")
-    if email.count('@') != 1:
+    if email.count("@") != 1:
         raise InvalidEmailError("Email must contain exactly one '@' symbol")
-    username, domain = email.split('@')
+    username, domain = email.split("@")
     if not username or not domain:
         raise InvalidEmailError("Email must have both username and"
                                 " domain parts")
-    if '.' not in domain:
+    if "." not in domain:
         raise InvalidEmailError("Domain must contain at least one dot")
     return True
 
@@ -258,9 +257,34 @@ def fetch_user_data(user_id: int) -> Optional[Dict[str, Any]]:
 
 
 if __name__ == "__main__":
-    user = userAccount("john_doe", "secret123", "john@example.com", 25)
-    print("User created:", user.get_account_info())
-    if user.login("secret123"):
-        print("Login successful")
-    else:
-        print("Login failed")
+    # Test error handling
+    print("Testing error handling...")
+
+    # Test invalid inputs
+    test_cases = [
+        ("", "password123", "user@example.com", 25),  # Empty username
+        ("user", "123", "user@example.com", 25),  # Short password
+        ("user", "password123", "invalid-email", 25),  # Invalid email
+        ("user", "password123", "user@example.com", -5),  # Invalid age
+    ]
+
+    for username, password, email, age in test_cases:
+        try:
+            user = userAccount(username, password, email, age)
+            print(f"✓ Created user: {username}")
+        except (ValueError, InvalidEmailError) as e:
+            print(f"✗ Error creating user '{username}': {e}")
+
+    # Test successful creation
+    try:
+        user = userAccount("john_doe", "secret123", "john@example.com", 25)
+        print(f"✓ Successfully created user: {user.username}")
+
+        # Test authentication
+        if user.login("secret123"):
+            print("✓ Login successful")
+        else:
+            print("✗ Login failed")
+
+    except Exception as e:
+        print(f"✗ Unexpected error: {e}")
